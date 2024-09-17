@@ -1,4 +1,7 @@
 <script setup>
+import Form from "./components/Form.vue";
+import Header from "./components/Header.vue";
+import List from "./components/List.vue";
 import { reactive } from 'vue';
 
 const state = reactive({
@@ -43,43 +46,13 @@ const registerTask = () => {
 
 <template>
   <div class="container">
-    <header class="p-5 mb-4 mt-4 bg-light rounded-3">
-      <h1>Minhas tarefas</h1>
-      <p>
-        Você possui {{ getPendingTasks().length }} tarefas pendentes
-      </p>
-    </header>
-    <!-- @{event-name}.prevent: invokes e.preventDefault() -->
-    <form @submit.prevent="registerTask">
-      <div class="row">
-        <div class="col">
-          <input required @change="(e) => state.newTaskName = e.target.value" class="form-control" type="text" placeholder="Digite aqui a descrição da tarefa" :value="state.newTaskName">
-        </div>
-        <div class="col-md-1">
-          <button class="btn btn-primary" type="submit">Cadastrar</button>
-        </div>
-        <div class="col-md-2">
-          <select @change="(e) => state.filter = e.target.value"  class="form-control">
-            <option value="all">Todas as tarefas</option>
-            <option value="pending">Tarefas pendentes</option>
-            <option value="done">Tarefas finalizadas</option>
-          </select>
-        </div>
-      </div>
-    </form>
-    <ul class="list-group mt-4">
-      <li v-for="task in getFilteredTasks()" class="list-group-item">
-        <input @change="(e) => task.done = e.target.checked" :id="task.name" type="checkbox" :checked="task.done">
-        <label :class="{ done: task.done }" class="ms-2" :for="task.name">
-          {{ task.name }}
-        </label>
-      </li>
-    </ul>
+    <Header :pending-tasks="getPendingTasks().length" />
+    <Form
+      :new-task="state.newTaskName"
+      :register-task="registerTask"
+      :edit-new-task="(e) => state.newTaskName = e.target.value"
+      :change-filter="(e) => state.filter = e.target.value"
+    />
+    <List :tasks="getFilteredTasks()" />
   </div>
 </template>
-
-<style scoped>
-.done {
-  text-decoration: line-through;
-}
-</style>
